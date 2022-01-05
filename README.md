@@ -82,3 +82,74 @@ docker push localhost:8082/spring-nexus-integration
 
 To verify if deployment succeeded, on Nexus site go to the main site. Select `Docker` from the left-hand side menu. You should see your Docker image there.
    ![](resources/nexus-docker-7.png)
+
+## Configuring proxy server
+
+Nexus proxy is used for caching artifacts (dependencies). This is useful when you are managing a large organization where dozens of people and services are downloading packages from the central repository. When we set up the proxy server we don't longer rely on central repository. Even if their servers stop working, we can still install cached artifacts. Also, some central repositories temporarily block access for those IPs that overly use their servers. In that case we are forced to set up our own proxy server.
+
+First, let's start with adding Nexus repository.
+1. Navigate to `Create repository` page by following screenshots:
+![](resources/nexus-docker-1.png)
+![](resources/nexus-docker-2.png)
+![](resources/nexus-docker-3.png)
+2. Now choose `maven2 (proxy)` recipe
+![](resources/nexus-docker-8.png)
+3. In the `Name` field enter the name of your repository (I chose `maven-proxy`). Also in the `Remote storage` field add url to the central repository from which we should proxy artifacts. We used `https://repo1.maven.org/maven2/`.
+   ![](resources/nexus-docker-9.png)
+4. Click `Create repository` and you are good to go.
+   ![](resources/nexus-docker-10.png)
+
+Now we have to modify maven configuration.
+1. Create `settings.xml` file.
+2. Add to it following code:
+```xml
+<settings>
+   <mirrors>
+      <mirror>
+         <id>nexus</id>
+         <mirrorOf>*</mirrorOf>
+        <!-- If needed, you can modify the address of you Nexus proxy repository here -->
+         <url>http://localhost:8081/repository/maven-proxy/</url>
+      </mirror>
+   </mirrors>
+   <profiles>
+      <profile>
+         <id>nexus</id>
+         <repositories>
+            <repository>
+               <id>central</id>
+               <url>http://central</url>
+               <releases><enabled>true</enabled></releases>
+               <snapshots><enabled>true</enabled></snapshots>
+            </repository>
+         </repositories>
+         <pluginRepositories>
+            <pluginRepository>
+               <id>central</id>
+               <url>http://central</url>
+               <releases><enabled>true</enabled></releases>
+               <snapshots><enabled>true</enabled></snapshots>
+            </pluginRepository>
+         </pluginRepositories>
+      </profile>
+   </profiles>
+   <activeProfiles>
+      <activeProfile>nexus</activeProfile>
+   </activeProfiles>
+</settings>
+```
+If you followed this tutorial one-to-one you only need to copy and paste this configuration. Otherwise, you can modify the url and repository name in the place marked by the comment.
+3. Now we have two options. We can either apply those settings to the global maven command and all your projects will use Nexus proxy, or we can just attach it to maven wrapper available in single project.
+
+   a) **Global mode**
+   
+   - copy `settings.xml` file into your local maven directory (on mac it's `~/.m2/`)
+   - execute maven script using global maven installation (eg. `mvn clean install`)
+
+   b) **Project restricted mode**
+
+   - copy `settings.xml` into `.mvn/wrapper/` directory in your project
+   - when executing any maven script add `-s .mvn/wrapper/settings.xml` option to the command (eg. `./mvnw clean install -s .mvn/wrapper/settings.xml`)
+
+4. To verify if Nexus cached artifacts go to the main site, select `Maven` from the left-hand side menu. You should see the list of cached artifacts there.
+   ![](resources/nexus-docker-11.png)
