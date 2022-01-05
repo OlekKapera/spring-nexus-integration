@@ -1,17 +1,15 @@
 <settings>
   <mirrors>
     <mirror>
-      <!--This sends everything else to /public -->
       <id>nexus</id>
       <mirrorOf>*</mirrorOf>
+      <!-- If needed, you can modify the address of you Nexus proxy repository here -->
       <url>http://localhost:8081/repository/maven-proxy/</url>
     </mirror>
   </mirrors>
   <profiles>
     <profile>
       <id>nexus</id>
-      <!--Enable snapshots for the built in central repo to direct -->
-      <!--all requests to nexus via the mirror -->
       <repositories>
         <repository>
           <id>central</id>
@@ -31,7 +29,6 @@
     </profile>
   </profiles>
   <activeProfiles>
-    <!--make the profile active all the time -->
     <activeProfile>nexus</activeProfile>
   </activeProfiles>
 </settings>
