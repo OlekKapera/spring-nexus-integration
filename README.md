@@ -111,7 +111,7 @@ First, let's start with adding Nexus repository.
 
 ![](resources/nexus-docker-10.png)
 
-Now we have to modify maven configuration.
+Now we have to modify Maven configuration.
 1. Create `settings.xml` file.
 2. Add to it following code:
 ```xml
@@ -151,17 +151,17 @@ Now we have to modify maven configuration.
 </settings>
 ```
 If you followed this tutorial one-to-one you only need to copy and paste this configuration. Otherwise, you can modify the url and repository name in the place marked by the comment.
-3. Now we have two options. We can either apply those settings to the global maven command and all your projects will use Nexus proxy, or we can just attach it to the maven wrapper included in the project.
+3. Now we have two options. We can either apply those settings to the global Maven command and all your projects will use Nexus proxy, or we can just attach it to the Maven wrapper included in the project.
 
    a) **Global mode**
    
-   - copy `settings.xml` file into your local maven directory (on mac it's `~/.m2/`)
-   - execute maven script using global maven command (eg. `mvn clean install`)
+   - copy `settings.xml` file into your local Maven directory (on mac it's `~/.m2/`)
+   - execute Maven script using global Maven command (eg. `mvn clean install`)
 
-   b) **Project restricted mode**
+   b) **Project-only mode**
 
    - copy `settings.xml` into `.mvn/wrapper/` directory in your project
-   - when executing any maven script add `-s .mvn/wrapper/settings.xml` option to the command (eg. `./mvnw clean install -s .mvn/wrapper/settings.xml`)
+   - when executing any Maven script add `-s .mvn/wrapper/settings.xml` option to the command (eg. `./mvnw clean install -s .mvn/wrapper/settings.xml`)
 
 4. To verify if Nexus cached artifacts go to the main site, select `Maven` from the left-hand side menu. You should see the list of cached artifacts there.
 
@@ -169,6 +169,6 @@ If you followed this tutorial one-to-one you only need to copy and paste this co
 
 ## Summary
 
-Nexus is a great tool that can do much more than just proxying maven artifacts or storing docker images. I hope this tutorial will make it easy for you to integrate Nexus with Spring backend in a containerized environment.
+Nexus is a great tool that can do much more than just proxying Maven artifacts or storing docker images. I hope this tutorial will make it easy for you to integrate Nexus with Spring backend in a containerized environment.
 
 Sample project can be found [here](https://github.com/OlekKapera/spring-nexus-integration).
